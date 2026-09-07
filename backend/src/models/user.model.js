@@ -7,7 +7,7 @@ const userSchema = new mongoose.Schema(
         // สามารถทำ validate ก่อน frontend ได้ เช่น field user การเช็คการใส่ค่าต่างๆ
         username: { type: String, required: true, trim: true },
         role: { type: String, enum: ["user", "admin"], default: "user" },
-        email: { type: String, required: true, unique: true, lowercase: true, trim: true, }, // แก้ไขตรงนี้แล้ว
+        email: { type: String, required: true, unique: true, lowercase: true, trim: true, match:[/^[^\s@]+@[^\s@]+\.[^\s@]+$/, "Invalid email format"] }, // แก้ไขตรงนี้แล้ว
         password: { type: String, required: true, minlength: 8, select: false }, // Protecting Password Leaks
     },
 

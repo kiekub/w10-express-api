@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { User } from "../../models/user.model";
+import { User } from "../../models/user.model.js";
 
 export const router = Router();
 
@@ -8,9 +8,9 @@ export const router = Router();
 router.get("/", async (req, res, next) => {
     try {
         // 1. get users data from database
-        const user = await User.find();
+        const users = await User.find();
         // 2. Send response object back to client
-            return res.status(200).json({ success: true, data: cleanUsers });
+        return res.status(200).json({ success: true, data: users });
         } catch (err) {
             return res.status(500).json({ success: false, error: err.message });
         }
@@ -33,7 +33,7 @@ router.post("/", async (req, res, next) => {
         const newUser = await User.create({ username, email, password, role });
 
         // แปลงจาก mongoDB เป็น obj
-        const { passwod: _password, ...userWithoutPassword} = newUser.toObject();
+        const { password: _password, ...userWithoutPassword} = newUser.toObject();
 
 
         return res.status(201).json(userWithoutPassword);

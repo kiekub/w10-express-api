@@ -198,7 +198,7 @@ async function start() {
   } catch (err) {
     console.error("Failed to connect to MongoDB:", err.message)
 
-    // สั่งปิด
+    // สั่งปิดถ้า error
     process.exit(1);
   }
 };

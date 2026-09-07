@@ -1,0 +1,137 @@
+import { Router } from "express";
+import { users } from "../../fakeDB/fakeUser.js";
+
+export const router = Router();
+
+// Read users
+// path หมายถึง endpoint ได้ แต่path บางตัวเป็นแค่ทางผ่านไม่ใช่ endpoint
+router.get("/", (req, res, next) => {
+    try {
+        //console.log(req);
+        res.json(users);
+    } catch (err) {
+        next(err)
+    }
+    }
+);
+
+// Create users
+router.post("/", (req, res, next) => {
+     try {
+        const { username, email, password } = req.body;
+
+        if(!username || !email || !password){
+            return res
+                .status("400")
+                .json({error: "username, email and password are required"});
+        }
+        
+        const highestId = users.reduce((max, user) => 
+            Math.max(max, Number(user.id)), 0,
+        );
+
+        const nextId = String(highestId + 1);
+
+        const newUser = {
+            id: nextId, 
+            username: username, 
+            email: email, 
+            password: password
+        };
+
+        users.push(newUser);
+
+        return res
+            .status(201)
+            .json(newUser);
+       
+            
+        } catch(err) {
+            next(err);
+        }
+                
+
+    }
+);
+
+// Update users
+router.put("/:id", (req, res, next) => {
+    try {
+    const user = users.find((u)=> u.id === req.params.id)
+
+    if (!user){
+        return res
+            .status(404)
+            .json({error: `User not found id: ${req.params.id}`});
+        }
+
+        const{username, email, password} = req.body
+
+        if (!username || !email || !password) {
+            return res
+                .status(400)
+                .json({error: "username, email and password are required!"});
+            }
+
+        //user updated
+        user.username = username;
+        user.email = email;
+        user.password = password;
+
+        return res.status(200).json(user);
+
+        } catch (err) {
+            next(err);
+        }
+    }
+);
+
+// Delete users 
+router.delete("/:id", (req, res, next) => {
+    try {
+           
+    // const user = users.find((u)=> u.id === req.params.id)
+
+    // if (!user){
+    //     return res
+    //         .status(404)
+    //         .json({error: `User not found id: ${req.params.id}`});
+    //     }
+
+    //     const{username, email, password} = req.body
+
+    //     if (!username || !email || !password) {
+    //         return res
+    //             .status(400)
+    //             .json({error: "username, email and password are required!"});
+    //         }
+
+    //     //user deleted
+    //     const deletedUser = req.params.id;
+    //     users.findIndex((u) => u.id === deletedUser)
+
+    //     users = users.filter((u)=> u.id !== req.params.id);
+    //     return res.status(200).json(user);
+
+    // Check if user ID is valid
+    const index = users.findIndex((u)=> u.id === req.params.id);
+    
+    // Validation
+    if(index === -1){
+        return res
+            .status(404)
+            .json({error: `User not found id: ${req.params.id}`});
+    }
+    
+    // Remove the user
+    const [deleted] = users.splice(index, 1);
+
+    return res.status(200).json(deleted);
+ 
+        } catch(err) {
+            next(err);
+        }
+
+
+    }   
+);

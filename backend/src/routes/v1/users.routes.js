@@ -4,6 +4,7 @@ import { users } from "../../fakeDB/fakeUser.js";
 export const router = Router();
 
 // Read users
+// path หมายถึง endpoint ได้ แต่path บางตัวเป็นแค่ทางผ่านไม่ใช่ endpoint
 router.get("/", (req, res, next) => {
     try {
         //console.log(req);

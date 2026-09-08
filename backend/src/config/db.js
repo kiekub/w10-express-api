@@ -1,16 +1,14 @@
 import mongoose from "mongoose";
 
 export async function connectDB(){
-    
     const uri = process.env.MONGODB_URI;
-    await mongoose.connect(uri);
-
-    console.log("MongoDB connected successfully! ✅");
 
     if(!uri){
-        throw new Error("MONGDB_URI is note set in the environment")
+        throw new Error("MONGODB_URI is not set in the environment");
     }
 
+    await mongoose.connect(uri);
+    console.log("MongoDB connected successfully! ✅");
 };
 
 

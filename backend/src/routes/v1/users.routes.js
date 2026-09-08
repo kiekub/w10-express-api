@@ -22,7 +22,7 @@ router.post("/", (req, res, next) => {
 
         if(!username || !email || !password){
             return res
-                .status("400")
+                .status(400)
                 .json({error: "username, email and password are required"});
         }
         

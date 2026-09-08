@@ -52,7 +52,7 @@ router.put("/:id", async (req, res, next) => {
     if (!username || !email || !password) {
       return res
         .status(400)
-        .json("error: username, email and password are required!");
+        .json({ error: "username, email and password are required!" });
     }
     //สร้าง username , email , password อันใหม่
     const updatedUser = await User.findByIdAndUpdate(
@@ -71,7 +71,7 @@ router.put("/:id", async (req, res, next) => {
     if (!updatedUser) {
       return res
         .status(404)
-        .json({ error: " user , email and password are not completed" });
+        .json({ error: "User not found" });
     }
     return res.status(200).json(updatedUser);
     

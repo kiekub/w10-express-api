@@ -1,9 +1,13 @@
 import express from "express";
 import { users } from "./fakeDB/fakeUser.js";
 import { router as apiRoutes } from "./routes/index.js";
+import { connectDB } from "./config/db.js";
+import { connectSupabase } from "./config/supabase.js";
+import cors from 'cors';
 
 const app = express();
 
+app.use(cors());
 app.use(express.json());
 
 // CRUD routes and endpoints
@@ -185,7 +189,23 @@ app.use((err, req, res, next) => {
 
 const PORT = 3001;
 
-app.listen(PORT, () => {
+async function start() {
+  try {
+    await connectDB();
+    await connectSupabase();
+
+    app.listen(PORT, () => {
         console.log(`Server is running on PORT:${PORT} 🌏`);
     }
-);
+  );
+
+  } catch (err) {
+    console.error("Failed to connect to MongoDB:", err.message)
+
+    // สั่งปิดถ้า error
+    process.exit(1);
+  }
+};
+
+// invoke start funct
+start();

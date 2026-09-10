@@ -1,5 +1,8 @@
 import { Router } from "express";
 import { User } from "../../models/user.model.js";
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+import { authUser } from "../../middlewares/authUser.js";
 
 export const router = Router();
 
@@ -111,3 +114,42 @@ router.get("/:id", async (req, res, next) => {
         next(err);
     }
 });
+
+// Logout User
+router.post("/logout", (req, res) => {
+
+    const isProd = process.env.NODE_ENV === "production";
+
+    res.clearCookie("accessToken", {
+            httpOnly: true,
+            secure: isProd,
+            sameSite: isProd ? "none" : "lax",
+            path: "/",
+        })
+    return res.status(200).json({success: true, message: "Logout Successful!👿"})
+});
+
+// Check user token
+router.get("/auth", authUser, async(req, res, next) => {
+    try {
+        const userId = req.user._id;
+        const user = await User.findById(userId);
+
+        if(!user){
+            return res.status(401).json({succes: false, message: "User not found!"})
+        }
+
+        return res.status(200).json({
+            success: true, 
+            data:{
+              _id: user._id, 
+              username: user.username, 
+              email: user.email, 
+              role: user.role
+        }});
+
+    } catch(err) {
+      next(err)
+    }
+      
+})
